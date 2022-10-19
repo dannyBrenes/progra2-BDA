@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(express.static(path.join(__dirname,'public')));
 
-const driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('BDA', '123456'))
+const driver = neo4j.driver('bolt://localhost', neo4j.auth.basic('neo4j', '123456'))
 const session = driver.session()
 
 app.listen(3000);
@@ -104,6 +104,65 @@ app.post('/editarCliente',function(req,res){
         })
         .catch(function(err){
             console.log(err)
+        })
+})
+
+app.get('/view/registroCompras',function(req,res){
+    session
+        .run('match (n:Cliente)-[r:Compra]-(p:Producto) return n.id,r,p.id')
+        .then(function(result){
+            var comprasArr = [];
+            result.records.forEach(function(record){
+                console.log(record._fields[1].properties.cantidad)
+                comprasArr.push({
+                    idCliente: record._fields[0],
+                    idProducto: record._fields[2],
+                    cantidad: record._fields[1].properties.cantidad
+                });
+            });
+            res.render('indexPrueba',{
+                compras: comprasArr
+            });
+        })
+        .catch(function(err){
+            console.log(err);
+        })
+})
+
+app.post('/generarCompras',function(req,res){
+    var idCliente = req.body.idCliente;
+    var idProducto = req.body.idProducto;
+    var cantidad = req.body.cantidad;
+    session
+        .run('MATCH (c:Cliente {id:$idClienteParam}),(p:Producto {id:$idProductoParam}) CREATE (c)-[r:Compra {cantidad:$cantidadParam}]->(p)',{idClienteParam:idCliente,idProductoParam:idProducto,cantidadParam:cantidad})
+        .then(function(result){
+            res.redirect('/view/registroCompras');
+        })
+        .catch(function(err){
+            console.log(err)
+        })
+})
+
+app.post('/buscarCompra',function(req,res){
+    var idCliente = req.body.idCliente;
+    session
+        .run('MATCH (n:Cliente)-[r:Compra]-(p:Producto) WHERE n.id=$idClienteParam RETURN n.first_name, p.nombre, r.cantidad',{idClienteParam:idCliente})
+        .then(function(result){
+            var comprasArr = [];
+            result.records.forEach(function(record){
+                console.log(record._fields)
+                comprasArr.push({
+                    idCliente: record._fields[0],
+                    idProducto: record._fields[1],
+                    cantidad: record._fields[2]
+                });
+            });
+            res.render('indexPrueba',{
+                compras: comprasArr
+            });
+        })
+        .catch(function(err){
+            console.log(err);
         })
 })
 
