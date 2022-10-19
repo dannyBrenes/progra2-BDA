@@ -22,6 +22,7 @@ const session = driver.session()
 app.listen(3000);
 console.log('El servidor esta en el puerto 3000');
 
+// Muestra todos los clientes registrados
 app.get('/',function(req,res){
     session
         .run('MATCH (n:Cliente) RETURN n')
@@ -43,6 +44,7 @@ app.get('/',function(req,res){
         })
 })
 
+// Crea un nuevo cliente en la base de datos
 app.post('/crearClientes',function(req,res){
     var id = req.body.id;
     var name = req.body.first_name;
@@ -58,6 +60,7 @@ app.post('/crearClientes',function(req,res){
         })
 })
 
+// Buscar un cliente especifico en la base de datos
 app.post('/buscarCliente',function(req,res){
     var id = req.body.id;
     session
@@ -80,6 +83,7 @@ app.post('/buscarCliente',function(req,res){
         })
 })
 
+// Elimina un cliente especifico en la base de datos
 app.post('/eliminarCliente',function(req,res){
     var id = req.body.id;
     session
@@ -92,6 +96,7 @@ app.post('/eliminarCliente',function(req,res){
         })
 })
 
+// Edita la informacion de un cliente especifico
 app.post('/editarCliente',function(req,res){
     var id = req.body.id;
     var name = req.body.first_name;
@@ -107,6 +112,7 @@ app.post('/editarCliente',function(req,res){
         })
 })
 
+// Muestra las compras realizadas
 app.get('/view/registroCompras',function(req,res){
     session
         .run('match (n:Cliente)-[r:Compra]-(p:Producto) return n.id,r,p.id')
@@ -129,6 +135,7 @@ app.get('/view/registroCompras',function(req,res){
         })
 })
 
+// Registra una nueva compra
 app.post('/generarCompras',function(req,res){
     var idCliente = req.body.idCliente;
     var idProducto = req.body.idProducto;
@@ -143,10 +150,35 @@ app.post('/generarCompras',function(req,res){
         })
 })
 
+// Muestra las compras realizadas por un cliente especifico
 app.post('/buscarCompra',function(req,res){
     var idCliente = req.body.idCliente;
     session
         .run('MATCH (n:Cliente)-[r:Compra]-(p:Producto) WHERE n.id=$idClienteParam RETURN n.first_name, p.nombre, r.cantidad',{idClienteParam:idCliente})
+        .then(function(result){
+            var comprasArr = [];
+            result.records.forEach(function(record){
+                console.log(record._fields)
+                comprasArr.push({
+                    idCliente: record._fields[0],
+                    idProducto: record._fields[1],
+                    cantidad: record._fields[2]
+                });
+            });
+            res.render('indexPrueba',{
+                compras: comprasArr
+            });
+        })
+        .catch(function(err){
+            console.log(err);
+        })
+})
+
+// Muestra todos los clientes que hayan comprado un producto especifico
+app.post('/view/consultas/productoComun',function(req,res){
+    var idProducto = req.body.idProducto;
+    session
+        .run('MATCH (n:Cliente)-[r:Compra]-(p:Producto) WHERE p.id=$idProductoParam RETURN n.first_name, p.nombre, r.cantidad',{idProductoParam:idProducto})
         .then(function(result){
             var comprasArr = [];
             result.records.forEach(function(record){
