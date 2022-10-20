@@ -22,8 +22,12 @@ const session = driver.session()
 app.listen(3000);
 console.log('El servidor esta en el puerto 3000');
 
-// Muestra todos los clientes registrados
 app.get('/',function(req,res){
+    res.render('menuInicio')
+})
+
+// Muestra todos los clientes registrados
+app.get('/mostrarClientes',function(req,res){
     session
         .run('MATCH (n:Cliente) RETURN n')
         .then(function(result){
@@ -53,7 +57,7 @@ app.post('/crearClientes',function(req,res){
         .run('CREATE (c:Cliente {id:$idParam,first_name:$nameParam,last_name:$lastnameParam}) RETURN c',
             {idParam:id,nameParam:name,lastnameParam:lastname})
         .then(function(result){
-            res.redirect('/');
+            res.redirect('/mostrarClientes');
         })
         .catch(function(err){
             console.log(err)
@@ -89,7 +93,7 @@ app.post('/eliminarCliente',function(req,res){
     session
         .run('MATCH (n:Cliente{id:$idParam})-[r:Compra]-() DELETE r,n',{idParam:id})
         .then(function(result){
-            res.redirect('/');
+            res.redirect('/mostrarClientes');
         })
         .catch(function(err){
             console.log(err);
@@ -105,14 +109,14 @@ app.post('/editarCliente',function(req,res){
         .run('MATCH (c:Cliente {id:$idParam}) set c={id:$idParam,first_name:$nameParam,last_name:$lastnameParam} RETURN c',
             {idParam:id,nameParam:name,lastnameParam:lastname})
         .then(function(result){
-            res.redirect('/');
+            res.redirect('/mostrarClientes');
         })
         .catch(function(err){
             console.log(err)
         })
 })
 
-// Muestra las compras realizadas
+// Muestra todas las compras realizadas
 app.get('/view/registroCompras',function(req,res){
     session
         .run('match (n:Cliente)-[r:Compra]-(p:Producto) return n.id,r,p.id')
@@ -158,7 +162,6 @@ app.post('/buscarCompra',function(req,res){
         .then(function(result){
             var comprasArr = [];
             result.records.forEach(function(record){
-                console.log(record._fields)
                 comprasArr.push({
                     idCliente: record._fields[0],
                     idProducto: record._fields[1],
@@ -198,4 +201,95 @@ app.post('/view/consultas/productoComun',function(req,res){
         })
 })
 
+// Muestra menu de consultas disponibles
+app.get('/view/mostrarConsultas',function(req,res){
+    res.render('indexConsultas')
+})
+
+// Muestra consulta de top cinco productos vendidos
+app.get('/view/consultas/top5Productos',function(req,res){
+    session
+        .run('match (n:Cliente)-[r:Compra]-(p:Producto) return p as Productos_Mayor_Cantidad_Vendidas, count(*) as Unidades_Vendidas order by Unidades_Vendidas desc limit 5')
+        .then(function(result){
+            var productosArr = [];
+            result.records.forEach(function(record){
+                productosArr.push({
+                    nombre: record._fields[0].properties.nombre,
+                    marca: record._fields[0].properties.marca,
+                    precio: record._fields[0].properties.precio 
+                });
+            });
+            res.render('consultaTopProductos',{
+                productos: productosArr
+            });
+        })
+        .catch(function(err){
+            console.log(err);
+        })
+})
+
+// Muestra consulta de top cinco mejores clientes
+app.get('/view/consultas/top5Clientes',function(req,res){
+    session
+        .run('match(x:Cliente)-[r:Compra]->(y:Producto) return x as Clientes_Mayor_Cantidad_Compras, count(*) as Cantidad_Compras order by Cantidad_Compras desc limit 5')
+        .then(function(result){
+            var clientesArr = [];
+            result.records.forEach(function(record){
+                clientesArr.push({
+                    id: record._fields[0].properties.id,
+                    first_name: record._fields[0].properties.first_name,
+                    last_name: record._fields[0].properties.last_name 
+                });
+            });
+            res.render('consultaTopClientes',{
+                clientes: clientesArr
+            });
+        })
+        .catch(function(err){
+            console.log(err);
+        })
+})
+
+// Muestra consulta de top cinco mejores marcas
+app.get('/view/consultas/top5Marcas',function(req,res){
+    session
+        .run('match (c:Cliente)-[r:Compra]-(p:Producto) return p.marca as marca, count(p.marca) as count order by count desc limit 5')
+        .then(function(result){
+            var marcasArr = [];
+            result.records.forEach(function(record){
+                marcasArr.push({
+                    nombre: record._fields[0],
+                    cantidad: record._fields[1].low,
+                });
+            });
+            res.render('consultaTopMarcas',{
+                marcas: marcasArr
+            });
+        })
+        .catch(function(err){
+            console.log(err);
+        })
+})
+
+app.post('/view/consultas/especializada2',function(req,res){
+    var idCliente = req.body.id;
+    session
+        .run('match(cli1:Cliente)--(prod)--(cli2:Cliente) where cli1.id=$idClienteParam with count(prod) as suma, cli2 as cli2, prod as prod where suma>1 return cli2.first_name,suma,prod.nombre',{idClienteParam:idCliente})
+        .then(function(result){
+            var comprasArr = [];
+            result.records.forEach(function(record){
+                console.log(record)
+                comprasArr.push({
+                    Cliente: record._fields[0],
+                    Producto: record._fields[2]
+                });
+            });
+            res.render('consultaEspecializada2',{
+                clientes: comprasArr
+            });
+        })
+        .catch(function(err){
+            console.log(err);
+        })
+})
 module.exports = app;
