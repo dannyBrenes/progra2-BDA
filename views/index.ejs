@@ -21,7 +21,7 @@
 <body>
     <div class="container">
         <div class="shadow-lg pb-3 mb-5 bg-body rounded">
-            <h1 class="p-5">Agregar de los clientes</h4>
+            <h1 class="p-5 align-content-center">Agregar de los clientes</h4>
             <form action="/crearClientes" method="POST" class="p-5">
                 <div class="col-md-6">
                     <label for="id">ID</label>
@@ -38,16 +38,20 @@
                 <br>
                 <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-save"></i> Agregar</button>
             </form>
-            <h1 class="p-5">Buscar cliente</h4>
+            <h1 class="p-5 align-content-center" >Buscar cliente</h4>
             <form method="post" action="/buscarCliente" class="p-5">
                 <div class="col-md-6">
-                    <label for="id">ID Cliente</label>
-                    <input type="number" name="id" id="id" class="form-control">
+                    <label for="first_name">Nombre</label>
+                    <input type="text" name="first_name" id="first_name" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label for="last_name">Apellido</label>
+                    <input type="text" name="last_name" id="last_name" class="form-control">
                 </div>
                 <br>
                 <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-search"></i> Buscar</button>
             </form>
-            <h1 class="p-5">Eliminar cliente</h4>
+            <h1 class="p-5 align-content-center">Eliminar cliente</h4>
             <form method="post" action="/eliminarCliente" class="p-5">
                 <div class="col-md-6">
                     <label for="id">ID Cliente</label>
@@ -57,7 +61,7 @@
                 <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-archive"></i> Eliminar</button>
             </form>
 
-            <h1 class="p-5">Editar los clientes</h4>
+            <h1 class="p-5 align-content-center">Editar los clientes</h4>
             <form action="/editarCliente" method="POST" class="p-5">
                 <div class="col-md-6">
                     <label for="id">ID</label>
