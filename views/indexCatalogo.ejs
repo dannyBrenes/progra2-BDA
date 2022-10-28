@@ -23,97 +23,113 @@
         <div class="shadow-lg pb-3 mb-5 bg-body rounded">
             <h1 class="p-5">Catalogo</h4>
 
-            <form action="/crearProducto" method="POST" class="p-5">
-                <div class="col-md-6">
-                    <label for="id">ID Producto</label>
-                    <input type="number" name="id" id="id" class="form-control">
-                </div>
-                <div class="col-md-6">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" name="nombre" id="nombre" class="form-control">
-                </div>
-                <div class="col-md-6">
-                    <label for="marca">Marca</label>
-                    <input type="text" name="marca" id="marca" class="form-control">
-                </div>
-                <div class="col-md-6">
-                    <label for="precio">Precio</label>
-                    <input type="number" name="precio" id="precio" class="form-control">
-                </div>
-                <br>
-                <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-save"></i> Agregar</button>
-            </form>
-            
-            <h1 class="p-5">Buscar Producto</h4>
-            <form action="/buscarProducto" method="POST" class="p-5">
-                <div class="col-md-6">
-                    <label for="id">ID Producto</label>
-                    <input type="number" name="id" id="id" class="form-control">                    
-                </div>
-                <br>
-                <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-search"></i> Buscar</button>
-            </form>
-
-            <h1 class="p-5">Eliminar Producto</h4>
-                <form method="post" action="/eliminarProducto" class="p-5">
+                <form action="/crearProducto" method="POST" class="p-5">
                     <div class="col-md-6">
                         <label for="id">ID Producto</label>
                         <input type="number" name="id" id="id" class="form-control">
                     </div>
+                    <div class="col-md-6">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" name="nombre" id="nombre" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="marca">Marca</label>
+                        <select class="form-select" aria-label="Default select example" name="marca">
+                            <option selected>Escoja la marca</option>
+                            <% marcas.forEach((marca)=> { %>
+                                <option>
+                                    <%= marca.nombre%>
+                                </option>
+                                <% }) %>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="precio">Precio</label>
+                        <input type="number" name="precio" id="precio" class="form-control">
+                    </div>
                     <br>
-                    <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-archive"></i> Eliminar</button>
+                    <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-save"></i> Agregar</button>
                 </form>
-            
-                <h1 class="p-5">Editar los productos</h4>
-                    <form action="/editarProducto" method="POST" class="p-5">
+
+                <h1 class="p-5">Buscar Producto</h4>
+                    <form action="/buscarProducto" method="POST" class="p-5">
                         <div class="col-md-6">
-                            <label for="id">ID</label>
+                            <label for="id">ID Producto</label>
                             <input type="number" name="id" id="id" class="form-control">
                         </div>
-                        <div class="col-md-6">
-                            <label for="nombre">Nombre</label>
-                            <input type="text" name="nombre" id="nombre" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="marca">Marca</label>
-                            <input type="text" name="marca" id="marca" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="precio">Precio</label>
-                            <input type="number" name="precio" id="precio" class="form-control">
-                        </div>
                         <br>
-                        <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-pencil"></i> Editar</button>
+                        <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-search"></i> Buscar</button>
                     </form>
 
-            <table class="table m-lg-5" id="tablaCatalogo">
-                <thead>
-                    <tr>
-                        <th scope="col">ID Producto</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Marca</th>
-                        <th scope="col">Precio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% objCatalogo.forEach((producto)=> { %>
-                        <tr>
-                            <td>
-                                <%= producto.id%>
-                            </td>
-                            <td>
-                                <%= producto.nombre%>
-                            </td>
-                            <td>
-                                <%= producto.marca%>
-                            </td>
-                            <td>
-                                <%= producto.precio%>
-                            </td>
-                        </tr>
-                        <% }) %>
-                </tbody>
-            </table>
+                    <h1 class="p-5">Eliminar Producto</h4>
+                        <form method="post" action="/eliminarProducto" class="p-5">
+                            <div class="col-md-6">
+                                <label for="id">ID Producto</label>
+                                <input type="number" name="id" id="id" class="form-control">
+                            </div>
+                            <br>
+                            <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-archive"></i>
+                                Eliminar</button>
+                        </form>
+
+                        <h1 class="p-5">Editar los productos</h4>
+                            <form action="/editarProducto" method="POST" class="p-5">
+                                <div class="col-md-6">
+                                    <label for="id">ID</label>
+                                    <input type="number" name="id" id="id" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="nombre">Nombre</label>
+                                    <input type="text" name="nombre" id="nombre" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="marca">Marca</label>
+                                    <select class="form-select" aria-label="Default select example" name="marca">
+                                        <option selected>Escoja la marca</option>
+                                        <% marcas.forEach((marca)=> { %>
+                                            <option>
+                                                <%= marca.nombre%>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="precio">Precio</label>
+                                    <input type="number" name="precio" id="precio" class="form-control">
+                                </div>
+                                <br>
+                                <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-pencil"></i>
+                                    Editar</button>
+                            </form>
+
+                            <table class="table m-lg-5" id="tablaCatalogo">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID Producto</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Marca</th>
+                                        <th scope="col">Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% objCatalogo.forEach((producto)=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= producto.id%>
+                                            </td>
+                                            <td>
+                                                <%= producto.nombre%>
+                                            </td>
+                                            <td>
+                                                <%= producto.marca%>
+                                            </td>
+                                            <td>
+                                                <%= producto.precio%>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
         </div>
     </div>
 

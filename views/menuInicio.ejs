@@ -21,6 +21,15 @@
 <body>
     <div class="container">
         <div class="shadow-lg pb-3 mb-5 bg-body rounded">
+            <h1 class="p-5">Cargar Archivos</h1>
+            <form action="/cargarArchivos" method="post" class="p-5">
+                <div class="mb-3">
+                    <label for="archivo" class="form-label">Escoja los archivos</label>
+                    <input class="form-control" type="file" id="archivo" name="archivo"
+                    accept=".csv">
+                </div>
+                <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-add"></i> Agregar</button>
+            </form>
             <h1 class="p-5">Clientes</h1>
             <form action="/mostrarClientes" method="get" class="p-5">
                 <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-search"></i> Consultar</button>
