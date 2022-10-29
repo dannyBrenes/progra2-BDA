@@ -95,7 +95,14 @@ app.post('/eliminarCliente', function (req, res) {
     session
         .run('MATCH (n:Cliente{id:$idParam})-[r:Compra]-() DELETE r,n', { idParam: id })
         .then(function (result) {
-            res.redirect('/mostrarClientes');
+            session
+            .run('MATCH (n:Cliente{id:$idParam}) delete n', { idParam: id })
+            .then(function (result){
+                res.redirect('/mostrarClientes');
+            })
+            .catch(function (err) {
+                console.log(err);
+            })
         })
         .catch(function (err) {
             console.log(err);
@@ -299,6 +306,29 @@ app.get('/view/consultas/top5Marcas', function (req, res) {
         })
 })
 
+// Muestra la consulta especializada uno
+app.post('/view/consultas/especializada1',function(req,res){
+    var idCliente = req.body.id;
+    session
+        .run('match(cli1:Cliente)--(prod)--(cli2:Cliente) where cli1.id=$idClienteParam with cli1 as cli1, cli2 as cli2, prod as prod return cli1.first_name,cli2.first_name,prod.nombre', { idClienteParam: idCliente })
+        .then(function (result) {
+            var comprasArr = [];
+            result.records.forEach(function (record) {
+                comprasArr.push({
+                    Cliente: record._fields[0],
+                    Cliente_Comun: record._fields[1],
+                    Producto: record._fields[2]
+                });
+            });
+            res.render('consultaEspecializada1', {
+                clientes: comprasArr
+            });
+        })
+        .catch(function (err) {
+            console.log(err);
+        })
+})
+
 // Muestra la consulta especializada dos
 app.post('/view/consultas/especializada2', function (req, res) {
     var idCliente = req.body.id;
@@ -307,7 +337,6 @@ app.post('/view/consultas/especializada2', function (req, res) {
         .then(function (result) {
             var comprasArr = [];
             result.records.forEach(function (record) {
-                console.log(record)
                 comprasArr.push({
                     Cliente: record._fields[0],
                     Producto: record._fields[2]
@@ -383,8 +412,8 @@ app.post('/buscarProducto', function (req, res) {
         .run('MATCH (n:Producto{id:$idParam}) RETURN n', { idParam: id })
         .then(function (result) {
             var CatalogoArr = [];
+            var marcasArr = [];
             result.records.forEach(function (record) {
-                //console.log(record._fields[0].properties)
                 CatalogoArr.push({
                     id: record._fields[0].properties.id,
                     nombre: record._fields[0].properties.nombre,
@@ -393,7 +422,8 @@ app.post('/buscarProducto', function (req, res) {
                 });
             });
             res.render('indexCatalogo', {
-                objCatalogo: CatalogoArr
+                objCatalogo: CatalogoArr,
+                marcas: marcasArr
             });
         })
         .catch(function (err) {
@@ -405,10 +435,16 @@ app.post('/buscarProducto', function (req, res) {
 app.post('/eliminarProducto', function (req, res) {
     var id = req.body.id;
     session
-        //.run('MATCH (n:Producto{id:$idParam})-[r:Compra]-() DELETE r,n',{idParam:id})
-        .run('MATCH (n:Producto{id:$idParam}) DELETE n', { idParam: id })
+        .run('MATCH (n:Producto{id:$idParam})-[r:Compra]-() DELETE r,n',{idParam:id})
         .then(function (result) {
-            res.redirect('/view/mostrarCatalogo');
+            session
+            .run('MATCH (n:Producto{id:$idParam}) DELETE n', { idParam: id })
+            .then(function(result){
+                res.redirect('/view/mostrarCatalogo');
+            })
+            .catch(function (err) {
+                console.log(err);
+            })
         })
         .catch(function (err) {
             console.log(err);

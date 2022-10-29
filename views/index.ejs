@@ -25,7 +25,7 @@
             <form action="/crearClientes" method="POST" class="p-5">
                 <div class="col-md-6">
                     <label for="id">ID</label>
-                    <input type="number" name="id" id="id" class="form-control">
+                    <input type="text" name="id" id="id" class="form-control">
                 </div>
                 <div class="col-md-6">
                     <label for="first_name">Nombre</label>
@@ -54,7 +54,7 @@
             <h1 class="p-5 align-content-center">Eliminar cliente</h4>
             <form method="post" action="/eliminarCliente" class="p-5">
                 <div class="col-md-6">
-                    <label for="id">ID Cliente</label>
+                    <label for="text">ID Cliente</label>
                     <input type="number" name="id" id="id" class="form-control">
                 </div>
                 <br>
@@ -65,7 +65,7 @@
             <form action="/editarCliente" method="POST" class="p-5">
                 <div class="col-md-6">
                     <label for="id">ID</label>
-                    <input type="number" name="id" id="id" class="form-control">
+                    <input type="text" name="id" id="id" class="form-control">
                 </div>
                 <div class="col-md-6">
                     <label for="first_name">Nombre</label>
@@ -77,6 +77,10 @@
                 </div>
                 <br>
                 <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-pencil"></i> Editar</button>
+            </form>
+
+            <form method="get" action="/" class="p-5">
+                <button type="submit" class="w-100 btn btn-primary"><i class="bi bi-home"></i> Volver al inicio</button>
             </form>
 
             <table class="table m-lg-5" id="tablaClientes">
